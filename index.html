@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foreman-Worker Communication Mockup</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Foreman Dashboard -->
+        <div class="foreman-side">
+            <div class="header">
+                <h2>Notify and Respond Dashboard</h2>
+                <div class="connection-status">
+                    <div class="device-connection" data-device="1">📱 MAI #001</div>
+                    <div class="device-connection" data-device="2">📱 MAI #002</div>
+                    <div class="device-connection" data-device="3">📱 MAI #003</div>
+                    <div class="device-connection" data-device="4">📱 MAI #004</div>
+                </div>
+            </div>
+            
+            <div class="message-creator">
+                <h3>Create Message</h3>
+                
+                <div class="device-selector">
+                    <label>Send to Devices:</label>
+                    <div class="device-selection">
+                        <div class="device-checkboxes">
+                            <div class="device-checkbox">
+                                <input type="checkbox" id="device1" value="1" checked>
+                                <label for="device1">MAI #001</label>
+                            </div>
+                            <div class="device-checkbox">
+                                <input type="checkbox" id="device2" value="2">
+                                <label for="device2">MAI #002</label>
+                            </div>
+                            <div class="device-checkbox">
+                                <input type="checkbox" id="device3" value="3">
+                                <label for="device3">MAI #003</label>
+                            </div>
+                            <div class="device-checkbox">
+                                <input type="checkbox" id="device4" value="4">
+                                <label for="device4">MAI #004</label>
+                            </div>
+                        </div>
+                        <div class="selection-controls">
+                            <button type="button" class="select-btn" onclick="selectAllDevices()">Select All</button>
+                            <button type="button" class="select-btn" onclick="clearAllDevices()">Clear All</button>
+                        </div>
+                    </div>
+                    <div class="selected-count">
+                        <span id="selectedCount">1</span> device(s) selected
+                    </div>
+                </div>
+                
+                <div class="template-selector">
+                    <label for="template">Select Template:</label>
+                    <select id="template" onchange="loadTemplate()">
+                        <option value="">-- Select Template --</option>
+                        <option value="safety">⚠️ Safety Alert</option>
+                        <option value="break">☕ Break Time</option>
+                        <option value="meeting">📅 Team Meeting</option>
+                        <option value="task">📋 New Task Assignment</option>
+                        <option value="emergency">🚨 Emergency Protocol</option>
+                        <option value="office">🏢 Please come to office</option>
+                        <option value="mood">😊 Mood Survey</option>
+                    </select>
+                </div>
+                
+                <div class="message-input">
+                    <label for="message">Message (140 chars max):</label>
+                    <textarea id="message" maxlength="140" placeholder="Type your message here..." oninput="updateCharCount()"></textarea>
+                    <div class="char-count">
+                        <span id="charCount">0</span>/140 characters
+                    </div>
+                </div>
+                
+                <div class="quick-responses">
+                    <label>Quick Response Buttons:</label>
+                    <div class="response-buttons">
+                        <div class="response-input">
+                            <input type="text" id="response1" placeholder="Response 1" maxlength="20">
+                            <input type="checkbox" id="enable1" checked>
+                        </div>
+                        <div class="response-input">
+                            <input type="text" id="response2" placeholder="Response 2" maxlength="20">
+                            <input type="checkbox" id="enable2" checked>
+                        </div>
+                        <div class="response-input">
+                            <input type="text" id="response3" placeholder="Response 3" maxlength="20">
+                            <input type="checkbox" id="enable3">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="scheduled-message">
+                    <label>
+                        <input type="checkbox" id="scheduleEnabled" onchange="toggleScheduleOptions()">
+                        Scheduled Message
+                    </label>
+                    <div id="scheduleOptions" class="schedule-options" style="display: none;">
+                        <div class="schedule-datetime">
+                            <label for="scheduleDate">Date:</label>
+                            <input type="date" id="scheduleDate">
+                            <label for="scheduleTime">Time:</label>
+                            <input type="time" id="scheduleTime">
+                        </div>
+                        <div class="schedule-recurring">
+                            <label for="recurring">Recurring:</label>
+                            <select id="recurring">
+                                <option value="">No repeat</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="send-btn" onclick="sendMessage()">Send Message</button>
+            </div>
+            
+            <div class="message-history">
+                <h3>Message History</h3>
+                <div id="history" class="history-list">
+                    <!-- Messages will appear here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Worker Devices -->
+        <div class="worker-side">
+            <div class="device-frame" id="device1-frame">
+                <div class="side-button side-button-left-1"></div>
+                <div class="side-button side-button-left-2"></div>
+                <div class="side-button side-button-right-1"></div>
+                <div class="side-button side-button-right-2"></div>
+                <div class="device-header">
+                    <div class="device-title">MAI #001</div>
+                </div>
+                
+                <div class="device-screen">
+                    <div class="device-status">
+                        <div id="device1Status" class="status-text">OK</div>
+                    </div>
+                    
+                    <div id="device1Message" class="device-message">
+                        <div class="no-message">work work...</div>
+                    </div>
+                    
+                    <div id="device1Buttons" class="device-response-buttons">
+                        <!-- Response buttons will appear here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-frame" id="device2-frame">
+                <div class="side-button side-button-left-1"></div>
+                <div class="side-button side-button-left-2"></div>
+                <div class="side-button side-button-right-1"></div>
+                <div class="side-button side-button-right-2"></div>
+                <div class="device-header">
+                    <div class="device-title">MAI #002</div>
+                </div>
+                
+                <div class="device-screen">
+                    <div class="device-status">
+                        <div id="device2Status" class="status-text">OK</div>
+                    </div>
+                    
+                    <div id="device2Message" class="device-message">
+                        <div class="no-message">work work...</div>
+                    </div>
+                    
+                    <div id="device2Buttons" class="device-response-buttons">
+                        <!-- Response buttons will appear here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-frame" id="device3-frame">
+                <div class="side-button side-button-left-1"></div>
+                <div class="side-button side-button-left-2"></div>
+                <div class="side-button side-button-right-1"></div>
+                <div class="side-button side-button-right-2"></div>
+                <div class="device-header">
+                    <div class="device-title">MAI #003</div>
+                </div>
+                
+                <div class="device-screen">
+                    <div class="device-status">
+                        <div id="device3Status" class="status-text">OK</div>
+                    </div>
+                    
+                    <div id="device3Message" class="device-message">
+                        <div class="no-message">work work...</div>
+                    </div>
+                    
+                    <div id="device3Buttons" class="device-response-buttons">
+                        <!-- Response buttons will appear here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-frame" id="device4-frame">
+                <div class="side-button side-button-left-1"></div>
+                <div class="side-button side-button-left-2"></div>
+                <div class="side-button side-button-right-1"></div>
+                <div class="side-button side-button-right-2"></div>
+                <div class="device-header">
+                    <div class="device-title">MAI #004</div>
+                </div>
+                
+                <div class="device-screen">
+                    <div class="device-status">
+                        <div id="device4Status" class="status-text">OK</div>
+                    </div>
+                    
+                    <div id="device4Message" class="device-message">
+                        <div class="no-message">work work...</div>
+                    </div>
+                    
+                    <div id="device4Buttons" class="device-response-buttons">
+                        <!-- Response buttons will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
